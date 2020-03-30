@@ -102,12 +102,71 @@ const background = {
   }
 };
 
+const getReadyMessage = {
+  spriteX: 134,
+  spriteY: 0,
+  width: 174,
+  height: 152,
+  positionX: canvas.width / 2 - 174 / 2,
+  positionY: 50,
+  draw() {
+    ctx.drawImage(
+      sprites,
+      this.spriteX,
+      this.spriteY,
+      this.width,
+      this.height,
+      this.positionX,
+      this.positionY,
+      this.width,
+      this.height
+    );
+  }
+};
+
+const activeScreen = {
+  screen: null,
+  changeTo(currentScreen) {
+    this.screen = currentScreen;
+  }
+};
+
+const screens = {
+  start: {
+    draw() {
+      background.draw();
+      floor.draw();
+      flappyBird.draw();
+      getReadyMessage.draw();
+    },
+    update() {},
+    click() {
+      activeScreen.changeTo(screens.game);
+    }
+  },
+  game: {
+    draw() {
+      background.draw();
+      floor.draw();
+      flappyBird.draw();
+    },
+    update() {
+      flappyBird.updatePositionY();
+    }
+  }
+};
+
 function renderLoop() {
-  flappyBird.updatePositionY();
-  background.draw();
-  floor.draw();
-  flappyBird.draw();
+  activeScreen.screen.draw();
+  activeScreen.screen.update();
   requestAnimationFrame(renderLoop);
 }
 
+canvas.addEventListener("click", () => {
+  if (activeScreen.screen.click) {
+    activeScreen.screen.click();
+  }
+});
+
+activeScreen.changeTo(screens.start);
 renderLoop();
