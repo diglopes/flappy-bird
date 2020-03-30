@@ -11,6 +11,8 @@ const flappyBird = {
   height: 24,
   positionX: 10,
   positionY: 50,
+  gravity: 0.25,
+  speed: 0,
   draw() {
     ctx.drawImage(
       sprites,
@@ -23,6 +25,10 @@ const flappyBird = {
       this.width,
       this.height
     );
+  },
+  updatePositionY() {
+    this.speed = this.speed + this.gravity;
+    this.positionY += this.speed;
   }
 };
 
@@ -97,6 +103,7 @@ const background = {
 };
 
 function renderLoop() {
+  flappyBird.updatePositionY();
   background.draw();
   floor.draw();
   flappyBird.draw();
