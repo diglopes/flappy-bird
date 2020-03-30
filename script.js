@@ -59,7 +59,45 @@ const floor = {
     );
   }
 };
+
+const background = {
+  spriteX: 390,
+  spriteY: 0,
+  width: 275,
+  height: 204,
+  positionX: 0,
+  positionY: canvas.height - 204,
+  draw() {
+    ctx.fillStyle = "#70c5ce";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(
+      sprites,
+      this.spriteX,
+      this.spriteY,
+      this.width,
+      this.height,
+      this.positionX,
+      this.positionY,
+      this.width,
+      this.height
+    );
+
+    ctx.drawImage(
+      sprites,
+      this.spriteX,
+      this.spriteY,
+      this.width,
+      this.height,
+      this.positionX + this.width,
+      this.positionY,
+      this.width,
+      this.height
+    );
+  }
+};
+
 function renderLoop() {
+  background.draw();
   floor.draw();
   flappyBird.draw();
   requestAnimationFrame(renderLoop);
