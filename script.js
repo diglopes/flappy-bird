@@ -13,6 +13,10 @@ const flappyBird = {
   positionY: 50,
   gravity: 0.25,
   speed: 0,
+  flyingRate: 7.6,
+  fly() {
+    this.speed -= this.flyingRate;
+  },
   draw() {
     ctx.drawImage(
       sprites,
@@ -148,7 +152,9 @@ const screens = {
     draw() {
       background.draw();
       floor.draw();
-      flappyBird.draw();
+    },
+    click() {
+      gameVariables.flappyBird.fly();
     },
     update() {
       flappyBird.updatePositionY();
