@@ -1,10 +1,32 @@
 const sprites = new Image();
-sprites.src = "./assets/sprites.png";
+sprites.src = "./assets/images/sprites.png";
+
+const makeAudio = src => {
+  const audio = new Audio();
+  audio.src = src;
+  return audio;
+};
+
+const sounds = {
+  hit: makeAudio("./assets/sounds/hit.wav")
+};
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
-const flappyBird = {
+function floorCollision(flappyBird, floor) {
+  const flappyBirdY = flappyBird.positionY + flappyBird.height;
+  const floorY = floor.positionY;
+  if (flappyBirdY >= floorY) {
+    return true;
+  }
+
+  return false;
+}
+
+const gameVariables = {};
+
+const makeFlappyBird = () => ({
   spriteX: 0,
   spriteY: 0,
   width: 33,
@@ -14,6 +36,7 @@ const flappyBird = {
   gravity: 0.25,
   speed: 0,
   flyingRate: 7.6,
+  gameOver: false,
   fly() {
     this.speed -= this.flyingRate;
   },
@@ -31,10 +54,20 @@ const flappyBird = {
     );
   },
   updatePositionY() {
-    this.speed = this.speed + this.gravity;
-    this.positionY += this.speed;
+    if (!this.gameOver) {
+      if (floorCollision(this, floor)) {
+        this.gameOver = true;
+        sounds.hit.play();
+        setTimeout(() => {
+          activeScreen.changeTo(screens.start);
+        }, 1000);
+        return;
+      }
+      this.speed = this.speed + this.gravity;
+      this.positionY += this.speed;
+    }
   }
-};
+});
 
 const floor = {
   spriteX: 0,
@@ -132,15 +165,21 @@ const activeScreen = {
   screen: null,
   changeTo(currentScreen) {
     this.screen = currentScreen;
+    if (currentScreen.initialize) {
+      currentScreen.initialize();
+    }
   }
 };
 
 const screens = {
   start: {
+    initialize() {
+      gameVariables.flappyBird = makeFlappyBird();
+    },
     draw() {
       background.draw();
       floor.draw();
-      flappyBird.draw();
+      gameVariables.flappyBird.draw();
       getReadyMessage.draw();
     },
     update() {},
@@ -152,12 +191,13 @@ const screens = {
     draw() {
       background.draw();
       floor.draw();
+      gameVariables.flappyBird.draw();
     },
     click() {
       gameVariables.flappyBird.fly();
     },
     update() {
-      flappyBird.updatePositionY();
+      gameVariables.flappyBird.updatePositionY();
     }
   }
 };
