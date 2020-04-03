@@ -100,6 +100,24 @@ const floor = {
       this.width,
       this.height
     );
+
+    ctx.drawImage(
+      sprites,
+      this.spriteX,
+      this.spriteY,
+      this.width,
+      this.height,
+      this.positionX + this.width * 2,
+      this.positionY,
+      this.width,
+      this.height
+    );
+  },
+  updatePositionY() {
+    this.positionX -= 1;
+    if (this.positionX === -this.width) {
+      this.positionX = 0;
+    }
   }
 };
 
@@ -136,6 +154,24 @@ const background = {
       this.width,
       this.height
     );
+
+    ctx.drawImage(
+      sprites,
+      this.spriteX,
+      this.spriteY,
+      this.width,
+      this.height,
+      this.positionX + this.width * 2,
+      this.positionY,
+      this.width,
+      this.height
+    );
+  },
+  updatePositionY() {
+    this.positionX -= 0.4;
+    if (this.positionX <= -this.width) {
+      this.positionX = 0;
+    }
   }
 };
 
@@ -197,6 +233,10 @@ const screens = {
       gameVariables.flappyBird.fly();
     },
     update() {
+      if (!gameVariables.flappyBird.gameOver) {
+        floor.updatePositionY();
+        background.updatePositionY();
+      }
       gameVariables.flappyBird.updatePositionY();
     }
   }
